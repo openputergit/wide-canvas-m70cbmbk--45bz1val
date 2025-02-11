@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consumer Import/Export Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @media (max-width: 768px) {
+            .tracking-stepper {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .tracking-line {
+                height: 2px;
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Mobile Navigation -->
+    <nav class="md:hidden bg-[#2c5282] text-white p-4">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <i class="bi bi-globe text-xl"></i>
+                <h1 class="text-lg font-bold">ImportHub</h1>
+            </div>
+            <button onclick="toggleMobileMenu()" class="text-2xl">
+                <i class="bi bi-list"></i>
+            </button>
+        </div>
+        <div id="mobileMenu" class="hidden mt-4 space-y-2">
+            <button onclick="showTab('products')" class="w-full text-left p-2 hover:bg-[#3182ce] rounded">
+                <i class="bi bi-box-seam mr-2"></i>Order Products
+            </button>
+            <button onclick="showTab('report')" class="w-full text-left p-2 hover:bg-[#3182ce] rounded">
+                <i class="bi bi-flag mr-2"></i>Report Issue
+            </button>
+            <button onclick="showTab('track')" class="w-full text-left p-2 hover:bg-[#3182ce] rounded">
+                <i class="bi bi-geo-alt mr-2"></i>Track Orders
+            </button>
+            <button onclick="showTab('profile')" class="w-full text-left p-2 hover:bg-[#3182ce] rounded">
+                <i class="bi bi-person mr-2"></i>Edit Profile
+            </button>
+        </div>
+    </nav>
+
+    <div class="flex min-h-screen">
+        <!-- Sidebar (Desktop) -->
+        <aside class="w-64 bg-[#2c5282] text-white p-6 hidden md:block">
+            <div class="flex items-center gap-2 mb-8">
+                <i class="bi bi-globe text-2xl"></i>
+                <h1 class="text-xl font-bold">ImportHub</h1>
+            </div>
+            <nav class="space-y-4">
+                <button onclick="showTab('products')" class="w-full flex items-center gap-3 p-3 bg-[#3182ce] rounded-lg">
+                    <i class="bi bi-box-seam"></i>
+                    <span>Order Products</span>
+                </button>
+                <button onclick="showTab('report')" class="w-full flex items-center gap-3 p-3 hover:bg-[#3182ce] rounded-lg">
+                    <i class="bi bi-flag"></i>
+                    <span>Report Issue</span>
+                </button>
+                <button onclick="showTab('track')" class="w-full flex items-center gap-3 p-3 hover:bg-[#3182ce] rounded-lg">
+                    <i class="bi bi-geo-alt"></i>
+                    <span>Track Orders</span>
+                </button>
+                <button onclick="showTab('profile')" class="w-full flex items-center gap-3 p-3 hover:bg-[#3182ce] rounded-lg">
+                    <i class="bi bi-person"></i>
+                    <span>Edit Profile</span>
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-4 md:p-8 overflow-y-auto">
+            <!-- Products Tab -->
+            <div id="products" class="tab-content active">
+                <h2 class="text-2xl font-bold mb-6">Available Products</h2>
+                <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 overflow-x-auto">
+                    <table class="w-full min-w-[600px]">
+                        <thead>
+                            <tr class="text-left border-b">
+                                <th class="pb-4">Product ID</th>
+                                <th class="pb-4">Product Name</th>
+                                <th class="pb-4">Quantity Available</th>
+                                <th class="pb-4">Price</th>
+                                <th class="pb-4">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b">
+                                <td class="py-4">PRD001</td>
+                                <td>Cotton Textiles</td>
+                                <td>1000 units</td>
+                                <td>$5,000</td>
+                                <td>
+                                    <button onclick="addToCart('PRD001')" class="bg-[#2c5282] text-white px-3 py-1 rounded">
+                                        Add to Cart
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-4">PRD002</td>
+                                <td>Electronics</td>
+                                <td>500 units</td>
+                                <td>$8,000</td>
+                                <td>
+                                    <button onclick="addToCart('PRD002')" class="bg-[#2c5282] text-white px-3 py-1 rounded">
+                                        Add to Cart
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Report Tab -->
+            <div id="report" class="tab-content">
+                <h2 class="text-2xl font-bold mb-6">Report an Issue</h2>
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <form onsubmit="submitReport(event)" class="space-y-4">
+                        <div>
+                            <label class="block mb-2">Order ID</label>
+                            <input type="text" class="w-full p-2 border rounded" required>
+                        </div>
+                        <div>
+                            <label class="block mb-2">Issue Type</label>
+                            <select class="w-full p-2 border rounded" required id="issueType">
+                                <option value="">Select Issue Type</option>
+                                <option value="damage">Damage</option>
+                                <option value="wrong">Wrong Product</option>
+                                <option value="delayed">Delayed</option>
+                                <option value="not_received">Still Not Received</option>
+                                <option value="missing">Missing</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block mb-2">Description</label>
+                            <textarea class="w-full p-2 border rounded" rows="4"></textarea>
+                        </div>
+                        <button type="submit" class="bg-[#2c5282] text-white px-4 py-2 rounded">Submit Report</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Track Tab -->
+            <div id="track" class="tab-content">
+                <h2 class="text-2xl font-bold mb-6">Track Orders</h2>
+                <div class="bg-white rounded-xl shadow-sm p-6 space-y-6">
+                    <div class="border rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="font-semibold">Order #ORD001</span>
+                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full">Shipped</span>
+                        </div>
+                        <div class="flex tracking-stepper justify-between items-center mb-4">
+                            <div class="flex flex-col items-center">
+                                <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white">
+                                    <i class="bi bi-check"></i>
+                                </div>
+                                <span class="text-sm mt-2">Order Placed</span>
+                            </div>
+                            <div class="tracking-line h-1 bg-green-500 flex-1 mx-2"></div>
+                            <div class="flex flex-col items-center">
+                                <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white">
+                                    <i class="bi bi-check"></i>
+                                </div>
+                                <span class="text-sm mt-2">Shipped</span>
+                            </div>
+                            <div class="tracking-line h-1 bg-gray-300 flex-1 mx-2"></div>
+                            <div class="flex flex-col items-center">
+                                <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                                    <i class="bi bi-truck"></i>
+                                </div>
+                                <span class="text-sm mt-2">Out for Delivery</span>
+                            </div>
+                            <div class="tracking-line h-1 bg-gray-300 flex-1 mx-2"></div>
+                            <div class="flex flex-col items-center">
+                                <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                                    <i class="bi bi-house-door"></i>
+                                </div>
+                                <span class="text-sm mt-2">Delivered</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center text-sm text-gray-600">
+                            <div>From: Shanghai Port</div>
+                            <div>To: Los Angeles Port</div>
+                            <div>Expected: Oct 20, 2023</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Tab -->
+            <div id="profile" class="tab-content">
+                <h2 class="text-2xl font-bold mb-6">Edit Profile</h2>
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <form onsubmit="updateProfile(event)" class="space-y-4">
+                        <div>
+                            <label class="block mb-2">Full Name</label>
+                            <input type="text" class="w-full p-2 border rounded" value="John Doe">
+                        </div>
+                        <div>
+                            <label class="block mb-2">Email</label>
+                            <input type="email" class="w-full p-2 border rounded" value="john@example.com">
+                        </div>
+                        <div>
+                            <label class="block mb-2">Port Location</label>
+                            <input type="text" class="w-full p-2 border rounded" value="Los Angeles Port">
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <button type="submit" class="bg-[#2c5282] text-white px-4 py-2 rounded">Update Profile</button>
+                            <button type="button" onclick="deleteAccount()" class="bg-red-600 text-white px-4 py-2 rounded">Delete Account</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('hidden');
+        }
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            const mobileMenu = document.getElementById('mobileMenu');
+            if (!mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+            }
+        }
+
+        function addToCart(productId) {
+            alert(`Product ${productId} added to cart`);
+        }
+
+        function submitReport(event) {
+            event.preventDefault();
+            const token = Math.random().toString(36).substr(2, 9);
+            const issueType = document.getElementById('issueType').value;
+            let solution = '';
+
+            switch(issueType) {
+                case 'damage':
+                    solution = 'We will arrange for a replacement';
+                    break;
+                case 'wrong':
+                    solution = 'We will arrange for product exchange';
+                    break;
+                case 'delayed':
+                    solution = 'Compensation will be provided for the delay';
+                    break;
+                case 'not_received':
+                    solution = 'We will initiate an investigation';
+                    break;
+                case 'missing':
+                    solution = 'We will arrange for immediate resend';
+                    break;
+            }
+
+            alert(`Report submitted successfully.\nYour token is: ${token}\nProposed solution: ${solution}`);
+        }
+
+        function updateProfile(event) {
+            event.preventDefault();
+            alert('Profile updated successfully');
+        }
+
+        function deleteAccount() {
+            if(confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                alert('Account deleted successfully');
+            }
+        }
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
